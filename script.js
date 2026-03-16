@@ -16,46 +16,31 @@ gsap.to("#orpheus",{
     repeat: -1,
 });
 
-// --- PIXEL PARTICLE ENGINE ---
-
 function createParticle() {
     const stage = document.getElementById("stage");
     const orpheus = document.getElementById("orpheus");
-    
-    // Get Orpheus's current position
     const rect = orpheus.getBoundingClientRect();
-    
-    // Create the particle element
     const p = document.createElement("div");
     p.className = "particle";
     stage.appendChild(p);
-
-    // Position it at the back of the hoverboard
     const startX = rect.left + (rect.width * 0.2);
     const startY = rect.top + (rect.height * 0.8);
-
     gsap.set(p, { x: startX, y: startY });
-
-    // Animate the particle drifting away and disappearing
     gsap.to(p, {
-        x: startX - (Math.random() * 100 + 50), // Drifts backward
-        y: startY + (Math.random() * 40 - 20),  // Slight wobble
+        x: startX - (Math.random() * 100 + 50),
+        y: startY + (Math.random() * 40 - 20),
         opacity: 0,
         scale: 0.5,
         duration: Math.random() * 1 + 0.5,
         ease: "power1.out",
-        onComplete: () => p.remove() // Cleanup memory
+        onComplete: () => p.remove()
     });
 }
-
-// Spawn particles
 let particleInterval = setInterval(createParticle, 50);
-
 let masterTl;
 
 function createMasterTimeline() {
-  if (masterTl) masterTl.kill(); // Kill the old timeline if it exists
-  
+  if (masterTl) masterTl.kill();
   masterTl = gsap.timeline();
   masterTl.fromTo("#orpheus",
       {left: "110vw",rotation: 0},
@@ -102,11 +87,8 @@ function createMasterTimeline() {
 const playBtn = document.getElementById("play-btn");
 
 playBtn.addEventListener("click", () => {
-  // Hide the play button
   playBtn.style.pointerEvents = "none";
   gsap.to(playBtn, { opacity: 0, duration: 0.2 });
-
-  // Move orpheus off screen to the left before starting the timeline
   gsap.to("#orpheus", {
     left: "-150px",
     duration: 1.5,
@@ -119,9 +101,8 @@ playBtn.addEventListener("click", () => {
 
 const cookieEl = document.getElementById("cookie");
 const fortuneTextEl = document.getElementById("fortune-text");
-
-let fortunes = [];
 const fortunesReady = loadFortunes();
+let fortunes = [];
 
 async function loadFortunes() {
   try {
@@ -166,7 +147,6 @@ document.getElementById("set-msg-btn").addEventListener("click", () => {
 cookieEl.addEventListener("click", async () => {
   await fortunesReady;
   fortuneTextEl.textContent = currentCustomMessage ? currentCustomMessage : randomFortune();
-
   gsap.killTweensOf("#cookie");
   const clickTl = gsap.timeline();
   clickTl
@@ -216,11 +196,10 @@ recordBtn.addEventListener("click", async () => {
   try {
     const stream = await navigator.mediaDevices.getDisplayMedia({
       video: { displaySurface: "browser" },
-      audio: true, // optionally capture audio if you had any
+      audio: true, 
     });
 
     mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-
     mediaRecorder.ondataavailable = function (e) {
       if (e.data.size > 0) {
         recordedChunks.push(e.data);
@@ -247,7 +226,6 @@ recordBtn.addEventListener("click", async () => {
     recordBtn.textContent = "Recording...";
     recordBtn.style.pointerEvents = "none";
 
-    // Play the animation automatically when recording starts
     const btn = document.getElementById("restart-btn");
     const pBtn = document.getElementById("play-btn");
     gsap.set(btn, { opacity: 0 });
@@ -255,7 +233,6 @@ recordBtn.addEventListener("click", async () => {
     gsap.set("#cookie", { backgroundPosition: "0px 0px", scale: 0, opacity: 0, x: 0, y: 0, rotation: 0, xPercent: -50, yPercent: -50 });
     gsap.set("#fortune-text", { scale: 0, opacity: 0, top: "50%", xPercent: -50, yPercent: -50 });
     
-    // We make orpheus run left before restarting for recording as well
     gsap.to("#orpheus", {
       left: "-150px",
       duration: 1.5,
@@ -265,8 +242,6 @@ recordBtn.addEventListener("click", async () => {
       }
     });
 
-    // The user will manually stop the screen recording using the browser's "Stop sharing" button
-    // which triggers stream.getVideoTracks()[0].onended
     stream.getVideoTracks()[0].onended = function () {
       mediaRecorder.stop();
     };

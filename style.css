@@ -142,10 +142,10 @@ body{
     position: absolute;
     top: 0;
     left: 0;
-    width: 4px; /* Tiny pixel size */
+    width: 4px; 
     height: 4px;
-    background-color: #00FF00; /* Orpheus Lime Green */
-    box-shadow: 0 0 8px #00FF00; /* Subtle neon glow */
+    background-color: #00FF00; 
+    box-shadow: 0 0 8px #00FF00;
     pointer-events: none;
     z-index: 5;
 }
