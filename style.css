@@ -3,7 +3,27 @@
     padding: 0;
     box-sizing: border-box;
 }
-
+#restart-btn{
+    position: absolute;
+    bottom: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: 'VT323',monospace;
+    font-size: 32px;
+    padding: 10px 20px;
+    background-color: #3b200d;
+    color: white;
+    border: 4px solid #A05D28;
+    cursor: pointer;
+    z-index: 20;
+    opacity: 0;
+    pointer-events: none;
+    image-rendering: pixelated;
+}
+#restart-btn:hover {
+    background-color: #A05D28;
+    border-color: white;
+}
 html,
 body {
     width: 100%;
