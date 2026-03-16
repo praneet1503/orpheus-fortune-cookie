@@ -1,6 +1,6 @@
 gsap.set("#cookie",{scale: 0,opacity: 0,xPercent: -50,yPercent: -50});
 gsap.set("#fortune-text",{scale: 0,opacity: 0, xPercent: -50,yPercent: -50});
-gsap.set("#orpheus",{yPercent: -50});
+gsap.set("#orpheus",{yPercent: -40, scale: 3, transformOrigin: "bottom center"});
 
 gsap.to("#orpheus",{
   backgroundPosition: "-192px 0px",

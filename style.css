@@ -4,14 +4,24 @@
     box-sizing: border-box;
 }
 
+html,
+body {
+    width: 100%;
+    min-height: 100vh;
+}
+
 body{
     background-color: #1a1a1a;
+    background-image: url("Orpheus Background.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
     color: white;
     overflow:hidden;
 
 }
 
-stage {
+#stage {
     width:100vw;
     height: 100vh;
     display: flex;
