@@ -200,6 +200,7 @@ recordBtn.addEventListener("click", async () => {
       a.href = url;
       a.download = "fortune-cookie-animation.webm";
       a.click();
+      a.remove();
       window.URL.revokeObjectURL(url);
       recordedChunks = [];
       recordBtn.textContent = "Record Video";
@@ -236,6 +237,8 @@ recordBtn.addEventListener("click", async () => {
 
   } catch (error) {
     console.error("Error starting recording:", error);
+    recordBtn.textContent = "Record Video";
+    recordBtn.style.pointerEvents = "auto";
   }
 });
 
