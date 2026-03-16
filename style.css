@@ -3,7 +3,7 @@
     padding: 0;
     box-sizing: border-box;
 }
-#restart-btn{
+#play-btn, #restart-btn{
     position: absolute;
     bottom: 20%;
     left: 50%;
@@ -16,11 +16,13 @@
     border: 4px solid #A05D28;
     cursor: pointer;
     z-index: 20;
-    opacity: 0;
-    pointer-events: none;
     image-rendering: pixelated;
 }
-#restart-btn:hover {
+#restart-btn {
+    opacity: 0;
+    pointer-events: none;
+}
+#play-btn:hover, #restart-btn:hover {
     background-color: #A05D28;
     border-color: white;
 }

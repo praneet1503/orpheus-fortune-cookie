@@ -1,6 +1,6 @@
 gsap.set("#cookie",{scale: 0,opacity: 0,xPercent: -50,yPercent: -50});
 gsap.set("#fortune-text",{scale: 0,opacity: 0, xPercent: -50,yPercent: -50});
-gsap.set("#orpheus",{yPercent: -40, scale: 3, transformOrigin: "bottom center"});
+gsap.set("#orpheus",{left: "50%", xPercent: -50, yPercent: -40, scale: 3, transformOrigin: "bottom center"});
 
 gsap.to("#orpheus",{
   backgroundPosition: "-192px 0px",
@@ -63,7 +63,23 @@ function createMasterTimeline() {
   });
 }
 
-createMasterTimeline();
+const playBtn = document.getElementById("play-btn");
+
+playBtn.addEventListener("click", () => {
+  // Hide the play button
+  playBtn.style.pointerEvents = "none";
+  gsap.to(playBtn, { opacity: 0, duration: 0.2 });
+
+  // Move orpheus off screen to the left before starting the timeline
+  gsap.to("#orpheus", {
+    left: "-150px",
+    duration: 1.5,
+    ease: "power2.in",
+    onComplete: () => {
+      createMasterTimeline();
+    }
+  });
+});
 
 const cookieEl = document.getElementById("cookie");
 const fortuneTextEl = document.getElementById("fortune-text");
@@ -196,10 +212,21 @@ recordBtn.addEventListener("click", async () => {
 
     // Play the animation automatically when recording starts
     const btn = document.getElementById("restart-btn");
+    const pBtn = document.getElementById("play-btn");
     gsap.set(btn, { opacity: 0 });
+    gsap.set(pBtn, { opacity: 0, pointerEvents: "none" });
     gsap.set("#cookie", { backgroundPosition: "0px 0px", scale: 0, opacity: 0, x: 0, y: 0, rotation: 0, xPercent: -50, yPercent: -50 });
     gsap.set("#fortune-text", { scale: 0, opacity: 0, top: "50%", xPercent: -50, yPercent: -50 });
-    createMasterTimeline();
+    
+    // We make orpheus run left before restarting for recording as well
+    gsap.to("#orpheus", {
+      left: "-150px",
+      duration: 1.5,
+      ease: "power2.in",
+      onComplete: () => {
+        createMasterTimeline();
+      }
+    });
 
     // The user will manually stop the screen recording using the browser's "Stop sharing" button
     // which triggers stream.getVideoTracks()[0].onended
