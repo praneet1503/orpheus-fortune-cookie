@@ -1,0 +1,70 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: #1a1a1a;
+    color: white;
+    overflow:hidden;
+
+}
+
+stage {
+    width:100vw;
+    height: 100vh;
+    display: flex;
+    position: relative;
+    justify-content: center;
+    align-items: center;
+
+}
+
+.pixelated{
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+}
+#orpheus{
+    position:absolute;
+    width:64px;
+    height:64px;
+    background-image: url('norpehus.png');
+    background-size: 192px 64px;
+    background-position: 0px 0px;
+    top: 50%;
+    left: 0;
+    transform-origin: bottom center;
+    z-index: 10;
+}
+#cookie{
+    position: absolute;
+    width: 96px;
+    height: 96px;
+    background-image: url('cookies.png');
+    background-size: 288px 96px;
+    background-position: 0px 0px;
+    top: 50%;
+    left: 50%;
+    cursor: pointer;
+    z-index: 15;
+}
+#fortune-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    font-family: 'VT323', monospace;
+    font-size: 64px;
+    color: #00FF00;
+    text-shadow: 4px 4px 0px #A05D28, 
+                 -2px -2px 0px #1a1a1a;
+    white-space: nowrap;
+    text-align: center;
+    z-index: 5;
+    pointer-events: none;
+}
+#orpheus,#cookie{
+    image-rendering: pixelated;
+}
