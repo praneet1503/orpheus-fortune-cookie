@@ -15,51 +15,55 @@ gsap.to("#orpheus",{
     yoyo: true,
     repeat: -1,
 })
-const masterTl = gsap.timeline();
-masterTl.fromTo("#orpheus",
-    {left: "110vw",rotation: 0},
-    {
-        left: "50%",
-        xPercent: -50,
-        rotation: 12,
-        duration: 2.5,
-        ease: "power2.inOut"
-    }
-)
-.to("#orpheus",{
-    rotation: -5,
-    duration: 0.5,
-    ease: "power1.out"
-})
-.to("#orpheus", {
-  rotation: 0, 
-  duration: 0.4,
-  ease: "back.out(2)"
-})
+let masterTl;
 
-.to("#cookie", { 
-  scale: 1, 
-  opacity: 1, 
-  duration: 0.8, 
-  ease: "back.out(1.7)" 
-}, "+=0.2")
+function createMasterTimeline() {
+  if (masterTl) masterTl.kill(); // Kill the old timeline if it exists
+  
+  masterTl = gsap.timeline();
+  masterTl.fromTo("#orpheus",
+      {left: "110vw",rotation: 0},
+      {
+          left: "50%",
+          xPercent: -50,
+          rotation: 12,
+          duration: 2.5,
+          ease: "power2.inOut"
+      }
+  )
+  .to("#orpheus",{
+      rotation: -5,
+      duration: 0.5,
+      ease: "power1.out"
+  })
+  .to("#orpheus", {
+    rotation: 0, 
+    duration: 0.4,
+    ease: "back.out(2)"
+  })
+  .to("#cookie", { 
+    scale: 1, 
+    opacity: 1, 
+    duration: 0.8, 
+    ease: "back.out(1.7)" 
+  }, "+=0.2")
+  .to("#orpheus", {
+    left: "-150px", 
+    rotation: -15,
+    duration: 1.5,
+    ease: "power2.in"
+  }, "+=1")
+  .to("#cookie", {
+    y: "-=8",
+    rotation: 4,
+    duration: 1.2,
+    ease: "sine.inOut",
+    repeat: -1,
+    yoyo: true
+  });
+}
 
-
-.to("#orpheus", {
-  left: "-150px", 
-  rotation: -15,
-  duration: 1.5,
-  ease: "power2.in"
-}, "+=1")
-
-.to("#cookie", {
-  y: "-=8",
-  rotation: 4,
-  duration: 1.2,
-  ease: "sine.inOut",
-  repeat: -1,
-  yoyo: true
-});
+createMasterTimeline();
 
 const cookieEl = document.getElementById("cookie");
 const fortuneTextEl = document.getElementById("fortune-text");
@@ -93,9 +97,23 @@ function randomFortune() {
   return fortunes[i];
 }
 
+let currentCustomMessage = "";
+
+document.getElementById("set-msg-btn").addEventListener("click", () => {
+  const input = document.getElementById("custom-fortune");
+  currentCustomMessage = input.value.trim();
+  
+  const btn = document.getElementById("set-msg-btn");
+  const originalText = btn.textContent;
+  btn.textContent = "Saved!";
+  setTimeout(() => {
+    btn.textContent = originalText;
+  }, 1000);
+});
+
 cookieEl.addEventListener("click", async () => {
   await fortunesReady;
-  fortuneTextEl.textContent = randomFortune();
+  fortuneTextEl.textContent = currentCustomMessage ? currentCustomMessage : randomFortune();
 
   gsap.killTweensOf("#cookie");
   const clickTl = gsap.timeline();
@@ -131,14 +149,66 @@ cookieEl.addEventListener("click", async () => {
 document.getElementById("restart-btn").addEventListener("click", () => {
   const btn = document.getElementById("restart-btn");
   btn.style.pointerEvents = "none";
-  
-  // Hide button and reset cookie/text values
   gsap.to(btn, { opacity: 0, duration: 0.2 });
   gsap.set("#cookie", { backgroundPosition: "0px 0px", scale: 0, opacity: 0, x: 0, y: 0, rotation: 0, xPercent: -50, yPercent: -50 });
   gsap.set("#fortune-text", { scale: 0, opacity: 0, top: "50%", xPercent: -50, yPercent: -50 });
-  
-  // Re-enable cookie clicks and restart intro
   cookieEl.style.pointerEvents = "auto";
-  masterTl.restart();
+  createMasterTimeline();
+});
+
+let mediaRecorder;
+let recordedChunks = [];
+const recordBtn = document.getElementById("record-btn");
+
+recordBtn.addEventListener("click", async () => {
+  try {
+    const stream = await navigator.mediaDevices.getDisplayMedia({
+      video: { displaySurface: "browser" },
+      audio: true, // optionally capture audio if you had any
+    });
+
+    mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+
+    mediaRecorder.ondataavailable = function (e) {
+      if (e.data.size > 0) {
+        recordedChunks.push(e.data);
+      }
+    };
+
+    mediaRecorder.onstop = function () {
+      const blob = new Blob(recordedChunks, { type: "video/webm" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      document.body.appendChild(a);
+      a.style.display = "none";
+      a.href = url;
+      a.download = "fortune-cookie-animation.webm";
+      a.click();
+      window.URL.revokeObjectURL(url);
+      recordedChunks = [];
+      recordBtn.textContent = "Record Video";
+      recordBtn.style.pointerEvents = "auto";
+    };
+
+    mediaRecorder.start();
+    recordBtn.textContent = "Recording...";
+    recordBtn.style.pointerEvents = "none";
+
+    // Play the animation automatically when recording starts
+    const btn = document.getElementById("restart-btn");
+    gsap.set(btn, { opacity: 0 });
+    gsap.set("#cookie", { backgroundPosition: "0px 0px", scale: 0, opacity: 0, x: 0, y: 0, rotation: 0, xPercent: -50, yPercent: -50 });
+    gsap.set("#fortune-text", { scale: 0, opacity: 0, top: "50%", xPercent: -50, yPercent: -50 });
+    createMasterTimeline();
+
+    // The user will manually stop the screen recording using the browser's "Stop sharing" button
+    // which triggers stream.getVideoTracks()[0].onended
+    stream.getVideoTracks()[0].onended = function () {
+      mediaRecorder.stop();
+    };
+
+  } catch (error) {
+    console.error("Error starting recording:", error);
+  }
 });
 
