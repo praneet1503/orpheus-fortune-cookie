@@ -137,3 +137,15 @@ body{
 #orpheus,#cookie{
     image-rendering: pixelated;
 }
+
+.particle {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px; /* Tiny pixel size */
+    height: 4px;
+    background-color: #00FF00; /* Orpheus Lime Green */
+    box-shadow: 0 0 8px #00FF00; /* Subtle neon glow */
+    pointer-events: none;
+    z-index: 5;
+}

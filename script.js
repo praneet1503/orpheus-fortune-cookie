@@ -14,7 +14,43 @@ gsap.to("#orpheus",{
     ease: "sine.inOut",
     yoyo: true,
     repeat: -1,
-})
+});
+
+// --- PIXEL PARTICLE ENGINE ---
+
+function createParticle() {
+    const stage = document.getElementById("stage");
+    const orpheus = document.getElementById("orpheus");
+    
+    // Get Orpheus's current position
+    const rect = orpheus.getBoundingClientRect();
+    
+    // Create the particle element
+    const p = document.createElement("div");
+    p.className = "particle";
+    stage.appendChild(p);
+
+    // Position it at the back of the hoverboard
+    const startX = rect.left + (rect.width * 0.2);
+    const startY = rect.top + (rect.height * 0.8);
+
+    gsap.set(p, { x: startX, y: startY });
+
+    // Animate the particle drifting away and disappearing
+    gsap.to(p, {
+        x: startX - (Math.random() * 100 + 50), // Drifts backward
+        y: startY + (Math.random() * 40 - 20),  // Slight wobble
+        opacity: 0,
+        scale: 0.5,
+        duration: Math.random() * 1 + 0.5,
+        ease: "power1.out",
+        onComplete: () => p.remove() // Cleanup memory
+    });
+}
+
+// Spawn particles
+let particleInterval = setInterval(createParticle, 50);
+
 let masterTl;
 
 function createMasterTimeline() {
